@@ -23,15 +23,18 @@ public class OrderCreateCommandHandler {
   private final OrderRepository orderRepository;
   private final RestaurantRepository restaurantRepository;
   private final OrderDataMapper orderDataMapper;
+  private final ApplicationDomainEventPublisher applicationDomainEventPublisher;
 
   public OrderCreateCommandHandler(OrderDomainService orderDomainService,
       CustomerRepository customerRepository, OrderRepository orderRepository,
-      RestaurantRepository restaurantRepository, OrderDataMapper orderDataMapper) {
+      RestaurantRepository restaurantRepository, OrderDataMapper orderDataMapper,
+      ApplicationDomainEventPublisher applicationDomainEventPublisher) {
     this.orderDomainService = orderDomainService;
     this.customerRepository = customerRepository;
     this.orderRepository = orderRepository;
     this.restaurantRepository = restaurantRepository;
     this.orderDataMapper = orderDataMapper;
+    this.applicationDomainEventPublisher = applicationDomainEventPublisher;
   }
 
   public CreateOrderResponse createOrder(CreateOrderCommand createOrderCommand) {
@@ -42,6 +45,7 @@ public class OrderCreateCommandHandler {
         .validateAndInitiateOrder(order, restaurant);
     Order orderResult = saveOrder(order);
     log.info("Order is created with id: {}", orderResult.getId().getValue());
+    applicationDomainEventPublisher.publish(orderCreatedEvent);
     return orderDataMapper.orderToCreateOrderResponse(orderResult);
   }
 
