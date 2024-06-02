@@ -2,7 +2,9 @@ package com.food.ordering.system.order.service.domain;
 
 import com.food.ordering.system.order.service.domain.dto.message.RestaurantApprovalResponse;
 import com.food.ordering.system.order.service.domain.ports.input.message.listener.restaurantApproval.RestaurantApprovalMessageListener;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RestaurantApprovalMessageListenerImpl implements RestaurantApprovalMessageListener {
 
   @Override
