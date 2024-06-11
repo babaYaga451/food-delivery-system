@@ -1,6 +1,7 @@
 package com.food.ordering.system.order.service.messaging.publisher.kafka;
 
 import com.food.ordering.system.kafka.order.avro.model.PaymentRequestAvroModel;
+import com.food.ordering.system.kafka.producer.KafkaMessageHelper;
 import com.food.ordering.system.kafka.producer.service.KafkaProducer;
 import com.food.ordering.system.order.service.domain.config.OrderServiceConfig;
 import com.food.ordering.system.order.service.domain.event.OrderCreatedEvent;
@@ -17,16 +18,16 @@ public class CreateOrderKafkaMessagePublisher implements
   private final OrderMessagingDataMapper orderMessagingDataMapper;
   private final OrderServiceConfig orderServiceConfig;
   private final KafkaProducer<String, PaymentRequestAvroModel> kafkaProducer;
-  private final OrderKafkaMessageHelper orderKafkaMessageHelper;
+  private final KafkaMessageHelper kafkaMessageHelper;
 
   public CreateOrderKafkaMessagePublisher(OrderMessagingDataMapper orderMessagingDataMapper,
       OrderServiceConfig orderServiceConfig,
       KafkaProducer<String, PaymentRequestAvroModel> kafkaProducer,
-      OrderKafkaMessageHelper orderKafkaMessageHelper) {
+      KafkaMessageHelper kafkaMessageHelper) {
     this.orderMessagingDataMapper = orderMessagingDataMapper;
     this.orderServiceConfig = orderServiceConfig;
     this.kafkaProducer = kafkaProducer;
-    this.orderKafkaMessageHelper = orderKafkaMessageHelper;
+    this.kafkaMessageHelper = kafkaMessageHelper;
   }
 
   @Override
@@ -40,7 +41,7 @@ public class CreateOrderKafkaMessagePublisher implements
       kafkaProducer.send(orderServiceConfig.getPaymentRequestTopicName(),
           orderId,
           paymentRequestAvroModel,
-          orderKafkaMessageHelper.
+          kafkaMessageHelper.
               getKafkaCallBack(orderServiceConfig.getPaymentRequestTopicName(),
                   paymentRequestAvroModel, orderId, "PaymentRequestAvroModel")
       );

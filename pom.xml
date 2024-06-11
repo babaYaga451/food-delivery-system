@@ -18,6 +18,7 @@
     <module>infrastructure</module>
     <module>customer-service</module>
     <module>payment-service</module>
+    <module>restaurant-service</module>
   </modules>
 
   <groupId>com.food.ordering.system</groupId>
@@ -34,6 +35,7 @@
 
   <dependencyManagement>
     <dependencies>
+<!--      order dependencies-->
       <dependency>
         <groupId>com.food.ordering.system</groupId>
         <artifactId>order-domain-core</artifactId>
@@ -59,17 +61,62 @@
         <artifactId>order-dataaccess</artifactId>
         <version>${project.version}</version>
       </dependency>
+
+<!--      payment dependencies-->
+
       <dependency>
         <groupId>com.food.ordering.system</groupId>
-        <artifactId>common-domain</artifactId>
+        <artifactId>payment-domain-core</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.food.ordering.system</groupId>
+        <artifactId>payment-application-service</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.food.ordering.system</groupId>
+        <artifactId>payment-dataaccess</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.food.ordering.system</groupId>
+        <artifactId>payment-messaging</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+<!--      Restaurant dependencies-->
+
+      <dependency>
+        <groupId>com.food.ordering.system</groupId>
+        <artifactId>restaurant-domain-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.food.ordering.system</groupId>
+        <artifactId>restaurant-application-service</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.food.ordering.system</groupId>
+        <artifactId>restaurant-dataaccess</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.food.ordering.system</groupId>
+        <artifactId>restaurant-messaging</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
         <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
+
+<!--      Kafka dependencies-->
       <dependency>
         <groupId>com.food.ordering.system</groupId>
         <artifactId>kafka-producer</artifactId>
@@ -90,9 +137,21 @@
         <artifactId>kafka-config</artifactId>
         <version>${project.version}</version>
       </dependency>
+
+<!--      common dependencies-->
+      <dependency>
+        <groupId>com.food.ordering.system</groupId>
+        <artifactId>common-domain</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>com.food.ordering.system</groupId>
         <artifactId>common-application</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.food.ordering.system</groupId>
+        <artifactId>common-dataaccess</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>

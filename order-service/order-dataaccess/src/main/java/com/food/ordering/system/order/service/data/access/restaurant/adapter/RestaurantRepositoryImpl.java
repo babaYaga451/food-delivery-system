@@ -1,8 +1,8 @@
 package com.food.ordering.system.order.service.data.access.restaurant.adapter;
 
-import com.food.ordering.system.order.service.data.access.restaurant.entity.RestaurantEntity;
+import com.food.ordering.system.dataaccess.restaurant.entity.RestaurantEntity;
+import com.food.ordering.system.dataaccess.restaurant.repository.RestaurantJpaRepository;
 import com.food.ordering.system.order.service.data.access.restaurant.mapper.RestaurantDataAccessMapper;
-import com.food.ordering.system.order.service.data.access.restaurant.repository.RestaurantJpaRepository;
 import com.food.ordering.system.order.service.domain.entity.Restaurant;
 import com.food.ordering.system.order.service.domain.ports.output.repository.RestaurantRepository;
 import java.util.List;
