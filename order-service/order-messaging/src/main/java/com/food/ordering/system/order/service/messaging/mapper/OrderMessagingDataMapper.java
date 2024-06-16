@@ -58,25 +58,29 @@ public class OrderMessagingDataMapper {
         .setOrderId(order.getId().getValue().toString())
         .setRestaurantId(order.getRestaurantId().getValue().toString())
         .setSagaId("")
-        .setRestaurantOrderStatus(RestaurantOrderStatus.valueOf(order.getOrderStatus().name()))
+        .setRestaurantOrderStatus(
+            com.food.ordering.system.kafka.order.avro.model.RestaurantOrderStatus
+                .valueOf(order.getOrderStatus().name()))
         .setProducts(order.getItems().stream()
             .map(orderItem -> Product.newBuilder()
                 .setId(orderItem.getProduct().getId().getValue().toString())
                 .setQuantity(orderItem.getQuantity())
                 .build())
             .collect(Collectors.toList()))
+        .setPrice(order.getPrice().getAmount())
         .setRestaurantOrderStatus(RestaurantOrderStatus.PAID)
+        .setCreatedAt(orderPaidEvent.getCreatedAt().toInstant())
         .build();
   }
 
   public PaymentResponse paymentResponseAvroModelToPaymentResponse(
       PaymentResponseAvroModel paymentResponseAvroModel) {
     return PaymentResponse.builder()
-        .id(paymentResponseAvroModel.getId().toString())
-        .paymentId(paymentResponseAvroModel.getPaymentId().toString())
-        .sageId(paymentResponseAvroModel.getSagaId().toString())
-        .customerId(paymentResponseAvroModel.getCustomerId().toString())
-        .orderId(paymentResponseAvroModel.getOrderId().toString())
+        .id(paymentResponseAvroModel.getId())
+        .paymentId(paymentResponseAvroModel.getPaymentId())
+        .sageId(paymentResponseAvroModel.getSagaId())
+        .customerId(paymentResponseAvroModel.getCustomerId())
+        .orderId(paymentResponseAvroModel.getOrderId())
         .price(paymentResponseAvroModel.getPrice())
         .createdAt(paymentResponseAvroModel.getCreatedAt())
         .paymentStatus(PaymentStatus.valueOf(paymentResponseAvroModel.getPaymentStatus().name()))
@@ -87,10 +91,10 @@ public class OrderMessagingDataMapper {
   public RestaurantApprovalResponse restaurantApprovalResponseAvroModelToRestaurantApprovalResponse(
       RestaurantApprovalResponseAvroModel restaurantApprovalResponseAvroModel) {
     return RestaurantApprovalResponse.builder()
-        .id(restaurantApprovalResponseAvroModel.getId().toString())
-        .restaurantId(restaurantApprovalResponseAvroModel.getRestaurantId().toString())
-        .orderId(restaurantApprovalResponseAvroModel.getOrderId().toString())
-        .sagaId(restaurantApprovalResponseAvroModel.getSagaId().toString())
+        .id(restaurantApprovalResponseAvroModel.getId())
+        .restaurantId(restaurantApprovalResponseAvroModel.getRestaurantId())
+        .orderId(restaurantApprovalResponseAvroModel.getOrderId())
+        .sagaId(restaurantApprovalResponseAvroModel.getSagaId())
         .createdAt(restaurantApprovalResponseAvroModel.getCreatedAt())
         .failureMessages(restaurantApprovalResponseAvroModel.getFailureMessages())
         .orderApprovalStatus(OrderApprovalStatus.valueOf(

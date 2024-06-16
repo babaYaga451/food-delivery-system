@@ -1,6 +1,5 @@
 package com.food.ordering.system.restaurant.service.messaging.publisher.kafka;
 
-import com.food.ordering.system.domain.event.publisher.DomainEventPublisher;
 import com.food.ordering.system.kafka.order.avro.model.RestaurantApprovalResponseAvroModel;
 import com.food.ordering.system.kafka.producer.KafkaMessageHelper;
 import com.food.ordering.system.kafka.producer.service.KafkaProducer;
@@ -49,7 +48,7 @@ public class OrderApprovedKafkaMessagePublisher implements OrderApprovedMessageP
       log.info("RestaurantApprovalResponseAvroModel sent to kafka at {}", System.nanoTime());
     } catch (Exception e) {
       log.error("Error while sending RestaurantApprovalResponseAvroModel message "
-          + "to kafka with order id: {}, error: {}", orderId, e.getMessage());
+          + " to kafka with order id: {}, error: {}", orderId, e.getMessage());
     }
   }
 }

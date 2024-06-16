@@ -67,16 +67,15 @@ public class OrderDomainServiceImpl implements OrderDomainService {
   }
 
   private void setOrderProductInformation(Order order, Restaurant restaurant) {
-    Map<ProductId, Product> productMap = order.getItems().stream()
+    Map<ProductId, Product> productMap = restaurant.getProducts().stream()
+            .collect(Collectors.toMap(
+                BaseEntity::getId,
+                Function.identity()));
+    order.getItems().stream()
         .map(OrderItem::getProduct)
-        .collect(Collectors.toMap(
-            BaseEntity::getId,
-            Function.identity()
-        ));
-    restaurant.getProducts().stream()
-        .filter(restaurantProduct -> productMap.containsKey(restaurantProduct.getId()))
-        .forEach(restaurantProduct -> {
-          Product currentProduct = productMap.get(restaurantProduct.getId());
+        .filter(product -> productMap.containsKey(product.getId()))
+        .forEach(currentProduct -> {
+          Product restaurantProduct = productMap.get(currentProduct.getId());
           currentProduct.updateWithConfirmedNameAndRestaurantPrice(restaurantProduct.getName(),
               restaurantProduct.getPrice());
         });

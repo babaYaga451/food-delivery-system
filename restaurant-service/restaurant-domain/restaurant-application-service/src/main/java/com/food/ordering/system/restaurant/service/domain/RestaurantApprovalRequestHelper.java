@@ -77,7 +77,8 @@ public class RestaurantApprovalRequestHelper {
         .stream()
         .collect(Collectors.toMap(
             Product::getId,
-            Function.identity()));
+            Function.identity(),
+            (product1, product2) -> product1));
 
     restaurant.setActive(restaurantEntity.isActive());
     restaurant.getOrderDetail().getProducts()

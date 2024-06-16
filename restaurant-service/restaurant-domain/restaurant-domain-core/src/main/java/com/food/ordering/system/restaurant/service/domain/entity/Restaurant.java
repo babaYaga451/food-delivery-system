@@ -22,7 +22,7 @@ public class Restaurant extends AggregateRoot<RestaurantId> {
     Money totalAmount = orderDetail.getProducts().stream()
         .map(product -> checkProductAvailableAndGetTotalAmount(failureMessages, product))
         .reduce(Money.ZERO, Money::add);
-    if (totalAmount != orderDetail.getTotalAmount()) {
+    if (totalAmount.getAmount().compareTo(orderDetail.getTotalAmount().getAmount()) != 0) {
       failureMessages.add("Total price is not correct for order: "+
           orderDetail.getId().getValue().toString());
     }

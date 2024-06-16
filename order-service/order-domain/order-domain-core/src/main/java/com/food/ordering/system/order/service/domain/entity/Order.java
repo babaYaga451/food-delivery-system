@@ -92,7 +92,7 @@ public class Order extends AggregateRoot<OrderId> {
   }
 
   public void cancel(List<String> failureMessages) {
-    if (!(orderStatus == OrderStatus.PAID || orderStatus == OrderStatus.CANCELLING)) {
+    if (!(orderStatus == OrderStatus.PENDING || orderStatus == OrderStatus.CANCELLING)) {
       throw new OrderDomainException("Order is not in correct state for cancel operation");
     }
     orderStatus = OrderStatus.CANCELLED;
