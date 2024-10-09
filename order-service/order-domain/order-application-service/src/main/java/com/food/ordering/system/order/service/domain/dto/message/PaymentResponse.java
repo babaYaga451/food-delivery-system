@@ -13,7 +13,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class PaymentResponse {
   private String id;
-  private String sageId;
+  private String sagaId;
   private String paymentId;
   private String orderId;
   private String customerId;

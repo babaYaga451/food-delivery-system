@@ -19,6 +19,7 @@
     <module>customer-service</module>
     <module>payment-service</module>
     <module>restaurant-service</module>
+    <module>infrastructure/outbox</module>
   </modules>
 
   <groupId>com.food.ordering.system</groupId>
@@ -160,6 +161,12 @@
       <dependency>
         <groupId>com.food.ordering.system</groupId>
         <artifactId>saga</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+<!--     outbox -->
+      <dependency>
+        <groupId>com.food.ordering.system</groupId>
+        <artifactId>outbox</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>

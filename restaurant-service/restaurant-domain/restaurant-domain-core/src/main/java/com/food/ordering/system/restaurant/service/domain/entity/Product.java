@@ -5,86 +5,82 @@ import com.food.ordering.system.domain.valueObject.Money;
 import com.food.ordering.system.domain.valueObject.ProductId;
 
 public class Product extends BaseEntity<ProductId> {
-  private String name;
-  private Money price;
-  private final int quantity;
-  private boolean available;
-
-  public void updateWithConfirmedNameAndPriceAndAvailability(String name,
-      Money price,
-      boolean available) {
-    this.name = name;
-    this.price = price;
-    this.available = available;
-  }
-
-  private Product(Builder builder) {
-    setId(builder.productId);
-    name = builder.name;
-    price = builder.price;
-    quantity = builder.quantity;
-    available = builder.available;
-  }
-
-
-  public String getName() {
-    return name;
-  }
-
-  public Money getPrice() {
-    return price;
-  }
-
-  public int getQuantity() {
-    return quantity;
-  }
-
-  public boolean isAvailable() {
-    return available;
-  }
-
-  public static final class Builder {
-
-    private ProductId productId;
     private String name;
     private Money price;
-    private int quantity;
+    private final int quantity;
     private boolean available;
 
-    private Builder() {
+    public void updateWithConfirmedNamePriceAndAvailability(String name, Money price, boolean available) {
+        this.name = name;
+        this.price = price;
+        this.available = available;
+    }
+
+    private Product(Builder builder) {
+        setId(builder.productId);
+        name = builder.name;
+        price = builder.price;
+        quantity = builder.quantity;
+        available = builder.available;
     }
 
     public static Builder builder() {
-      return new Builder();
+        return new Builder();
     }
 
-    public Builder productId(ProductId val) {
-      productId = val;
-      return this;
+    public String getName() {
+        return name;
     }
 
-    public Builder name(String val) {
-      name = val;
-      return this;
+    public Money getPrice() {
+        return price;
     }
 
-    public Builder price(Money val) {
-      price = val;
-      return this;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public Builder quantity(int val) {
-      quantity = val;
-      return this;
+    public boolean isAvailable() {
+        return available;
     }
 
-    public Builder available(boolean val) {
-      available = val;
-      return this;
-    }
+    public static final class Builder {
+        private ProductId productId;
+        private String name;
+        private Money price;
+        private int quantity;
+        private boolean available;
 
-    public Product build() {
-      return new Product(this);
+        private Builder() {
+        }
+
+        public Builder productId(ProductId val) {
+            productId = val;
+            return this;
+        }
+
+        public Builder name(String val) {
+            name = val;
+            return this;
+        }
+
+        public Builder price(Money val) {
+            price = val;
+            return this;
+        }
+
+        public Builder quantity(int val) {
+            quantity = val;
+            return this;
+        }
+
+        public Builder available(boolean val) {
+            available = val;
+            return this;
+        }
+
+        public Product build() {
+            return new Product(this);
+        }
     }
-  }
 }
