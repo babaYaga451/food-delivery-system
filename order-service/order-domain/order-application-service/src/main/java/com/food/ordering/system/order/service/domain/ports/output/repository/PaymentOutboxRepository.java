@@ -6,20 +6,32 @@ import com.food.ordering.system.saga.SagaStatus;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import reactor.core.publisher.Flux;
 
 public interface PaymentOutboxRepository {
 
-  OrderPaymentOutboxMessage save(OrderPaymentOutboxMessage orderPaymentOutboxMessage);
+  default OrderPaymentOutboxMessage save(OrderPaymentOutboxMessage orderPaymentOutboxMessage){
+    return null;
+  };
 
-  Optional<List<OrderPaymentOutboxMessage>> findByTypeAndOutboxStatusAndSagaStatue(String type,
+  default Optional<List<OrderPaymentOutboxMessage>> findByTypeAndOutboxStatusAndSagaStatue(String type,
       OutboxStatus outboxStatus,
-      SagaStatus... sagaStatus);
+      SagaStatus... sagaStatus) {
+    return Optional.empty();
+  };
 
-  Optional<OrderPaymentOutboxMessage> findByTypeAndSagaIdAndSagaStatus(String type,
+  default Optional<OrderPaymentOutboxMessage> findByTypeAndSagaIdAndSagaStatus(String type,
       UUID sagaId,
-      SagaStatus... sagaStatus);
+      SagaStatus... sagaStatus){
+    return Optional.empty();
+  };
 
-  void deleteByTypeAndOutboxStatusAndSagaStatus(String type,
+  default void deleteByTypeAndOutboxStatusAndSagaStatus(String type,
       OutboxStatus outboxStatus,
-      SagaStatus... sagaStatus);
+      SagaStatus... sagaStatus){};
+
+  default Flux<OrderPaymentOutboxMessage> watchPaymentOutboxCollection(
+      OutboxStatus outboxStatus,
+      SagaStatus... sagaStatus) {
+    return Flux.empty();};
 }
