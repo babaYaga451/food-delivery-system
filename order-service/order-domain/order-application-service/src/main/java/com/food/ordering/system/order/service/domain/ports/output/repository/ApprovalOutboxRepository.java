@@ -6,23 +6,20 @@ import com.food.ordering.system.saga.SagaStatus;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import reactor.core.publisher.Flux;
 
 public interface ApprovalOutboxRepository {
-  default OrderApprovalOutboxMessage save(OrderApprovalOutboxMessage orderApprovalOutboxMessage){return null;}
+  OrderApprovalOutboxMessage save(OrderApprovalOutboxMessage orderApprovalOutboxMessage);
 
-  default Optional<List<OrderApprovalOutboxMessage>> findByTypeAndOutboxStatusAndSagaStatue(String type,
+  Optional<List<OrderApprovalOutboxMessage>> findByTypeAndOutboxStatusAndSagaStatue(String type,
       OutboxStatus outboxStatus,
-      SagaStatus... sagaStatus){return Optional.empty();};
+      SagaStatus... sagaStatus);
 
-  default Optional<OrderApprovalOutboxMessage> findByTypeAndSagaIdAndSagaStatus(String type,
+  Optional<OrderApprovalOutboxMessage> findByTypeAndSagaIdAndSagaStatus(String type,
       UUID sagaId,
-      SagaStatus... sagaStatus){return Optional.empty();};
+      SagaStatus... sagaStatus);
 
-  default void deleteByTypeAndOutboxStatusAndSagaStatus(String type,
+  void deleteByTypeAndOutboxStatusAndSagaStatus(String type,
       OutboxStatus outboxStatus,
-      SagaStatus... sagaStatus){};
+      SagaStatus... sagaStatus);
 
-  default Flux<OrderApprovalOutboxMessage> watchRestaurantApprovalOutboxCollection(OutboxStatus outboxStatus,
-      SagaStatus... sagaStatus){return Flux.empty();};
 }

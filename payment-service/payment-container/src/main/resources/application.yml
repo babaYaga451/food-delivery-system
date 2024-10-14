@@ -26,9 +26,6 @@ spring:
       data-locations: classpath:init-data.sql
       mode: always
       schema-locations: classpath:init-schema.sql
-  data:
-    mongodb:
-      uri: mongodb://localhost:30003/food_ordering_system
 
 kafka-config:
   bootstrap-servers: localhost:19092, localhost:29092, localhost:39092

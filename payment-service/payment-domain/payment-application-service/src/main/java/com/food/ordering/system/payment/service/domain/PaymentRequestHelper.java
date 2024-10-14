@@ -13,6 +13,7 @@ import com.food.ordering.system.payment.service.domain.exception.PaymentNotFound
 import com.food.ordering.system.payment.service.domain.mapper.PaymentDataMapper;
 import com.food.ordering.system.payment.service.domain.outbox.model.OrderOutboxMessage;
 import com.food.ordering.system.payment.service.domain.outbox.scheduler.OrderOutboxHelper;
+import com.food.ordering.system.payment.service.domain.ports.output.message.publisher.PaymentResponseMessagePublisher;
 import com.food.ordering.system.payment.service.domain.ports.output.repository.CreditEntryRepository;
 import com.food.ordering.system.payment.service.domain.ports.output.repository.CreditHistoryRepository;
 import com.food.ordering.system.payment.service.domain.ports.output.repository.PaymentRepository;
@@ -35,24 +36,27 @@ public class PaymentRequestHelper {
   private final CreditEntryRepository creditEntryRepository;
   private final CreditHistoryRepository creditHistoryRepository;
   private final OrderOutboxHelper orderOutboxHelper;
+  private final PaymentResponseMessagePublisher paymentResponseMessagePublisher;
 
   public PaymentRequestHelper(PaymentDomainService paymentDomainService,
       PaymentDataMapper paymentDataMapper,
       PaymentRepository paymentRepository,
       CreditEntryRepository creditEntryRepository,
       CreditHistoryRepository creditHistoryRepository,
-      OrderOutboxHelper orderOutboxHelper) {
+      OrderOutboxHelper orderOutboxHelper,
+      PaymentResponseMessagePublisher paymentResponseMessagePublisher) {
     this.paymentDomainService = paymentDomainService;
     this.paymentDataMapper = paymentDataMapper;
     this.paymentRepository = paymentRepository;
     this.creditEntryRepository = creditEntryRepository;
     this.creditHistoryRepository = creditHistoryRepository;
     this.orderOutboxHelper = orderOutboxHelper;
+    this.paymentResponseMessagePublisher = paymentResponseMessagePublisher;
   }
 
   @Transactional
   public void persistPayment(PaymentRequest paymentRequest) {
-    if (isOutboxMessageProcessedForPayment(paymentRequest, PaymentStatus.COMPLETED)) {
+    if (publishIfOutboxMessageProcessedForPayment(paymentRequest, PaymentStatus.COMPLETED)) {
       log.info("An outbox message with saga id: {} is already saved to database!",
           paymentRequest.getSagaId());
       return;
@@ -75,7 +79,7 @@ public class PaymentRequestHelper {
 
   @Transactional
   public void persistCancelPayment(PaymentRequest paymentRequest) {
-    if (isOutboxMessageProcessedForPayment(paymentRequest, PaymentStatus.CANCELLED)) {
+    if (publishIfOutboxMessageProcessedForPayment(paymentRequest, PaymentStatus.CANCELLED)) {
       log.info("An outbox message with saga id: {} is already saved to database!",
           paymentRequest.getSagaId());
       return;
@@ -105,7 +109,8 @@ public class PaymentRequestHelper {
   }
 
   private CreditEntry getCreditEntry(CustomerId customerId) {
-    Optional<CreditEntry> creditEntry = creditEntryRepository.findByCustomerId(customerId.getValue());
+    Optional<CreditEntry> creditEntry = creditEntryRepository.findByCustomerId(
+        customerId.getValue());
     if (creditEntry.isEmpty()) {
       log.error("Could not find credit entry for customer: {}", customerId.getValue());
       throw new PaymentApplicationServiceException("Could not find credit entry for customer: " +
@@ -115,7 +120,8 @@ public class PaymentRequestHelper {
   }
 
   private List<CreditHistory> getCreditHistory(CustomerId customerId) {
-    Optional<List<CreditHistory>> creditHistories = creditHistoryRepository.findByCustomerId(customerId.getValue());
+    Optional<List<CreditHistory>> creditHistories = creditHistoryRepository.findByCustomerId(
+        customerId.getValue());
     if (creditHistories.isEmpty()) {
       log.error("Could not find credit history for customer: {}", customerId.getValue());
       throw new PaymentApplicationServiceException("Could not find credit history for customer: " +
@@ -135,13 +141,17 @@ public class PaymentRequestHelper {
     }
   }
 
-  private boolean isOutboxMessageProcessedForPayment(PaymentRequest paymentRequest,
+  private boolean publishIfOutboxMessageProcessedForPayment(PaymentRequest paymentRequest,
       PaymentStatus paymentStatus) {
     Optional<OrderOutboxMessage> orderOutboxMessage =
         orderOutboxHelper.getCompletedOrderOutboxMessageBySagaIdAndPaymentStatus(
             UUID.fromString(paymentRequest.getSagaId()),
             paymentStatus);
-    return orderOutboxMessage.isPresent();
+    if (orderOutboxMessage.isPresent()) {
+      paymentResponseMessagePublisher.publish(orderOutboxMessage.get(), orderOutboxHelper::updateOutboxMessage);
+      return true;
+    }
+    return false;
   }
 
 }
