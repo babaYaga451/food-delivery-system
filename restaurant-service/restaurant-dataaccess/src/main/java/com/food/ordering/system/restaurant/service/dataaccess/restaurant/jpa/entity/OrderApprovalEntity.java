@@ -1,4 +1,4 @@
-package com.food.ordering.system.restaurant.service.dataaccess.restaurant.entity;
+package com.food.ordering.system.restaurant.service.dataaccess.restaurant.jpa.entity;
 
 import com.food.ordering.system.domain.valueObject.OrderApprovalStatus;
 import jakarta.persistence.Entity;
