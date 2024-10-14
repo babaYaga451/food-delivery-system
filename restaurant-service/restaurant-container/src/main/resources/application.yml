@@ -4,6 +4,10 @@ server:
 logging:
   level:
     com.food.ordering.system: DEBUG
+    org.apache.kafka: ERROR
+    org.springframework.kafka: ERROR
+    io.confluent.kafka.serializers: ERROR
+    io.confluent.kafka.schemaregistry.client: ERROR
 
 restaurant-service:
   restaurant-approval-request-topic-name: restaurant-approval-request

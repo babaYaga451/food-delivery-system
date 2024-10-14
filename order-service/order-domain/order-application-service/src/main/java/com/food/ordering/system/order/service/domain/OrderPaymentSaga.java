@@ -11,8 +11,8 @@ import com.food.ordering.system.order.service.domain.exception.OrderDomainExcept
 import com.food.ordering.system.order.service.domain.mapper.OrderDataMapper;
 import com.food.ordering.system.order.service.domain.outbox.model.approval.OrderApprovalOutboxMessage;
 import com.food.ordering.system.order.service.domain.outbox.model.payment.OrderPaymentOutboxMessage;
-import com.food.ordering.system.order.service.domain.outbox.scheduler.approval.ApprovalOutboxHelper;
-import com.food.ordering.system.order.service.domain.outbox.scheduler.payment.PaymentOutboxHelper;
+import com.food.ordering.system.order.service.domain.outbox.approval.ApprovalOutboxHelper;
+import com.food.ordering.system.order.service.domain.outbox.payment.PaymentOutboxHelper;
 import com.food.ordering.system.outbox.OutboxStatus;
 import com.food.ordering.system.saga.SagaStatus;
 import com.food.ordering.system.saga.SagaStep;
@@ -49,9 +49,9 @@ public class OrderPaymentSaga implements SagaStep<PaymentResponse> {
   @Override
   @Transactional
   public void process(PaymentResponse paymentResponse) {
-    Optional<OrderPaymentOutboxMessage> orderPaymentOutboxMessageResponse = paymentOutboxHelper.getPaymentOutboxMessageBySagaIdAndSagaStatus(
-        UUID.fromString(paymentResponse.getSagaId()),
-        SagaStatus.STARTED);
+    Optional<OrderPaymentOutboxMessage> orderPaymentOutboxMessageResponse =
+        paymentOutboxHelper.getPaymentOutboxMessageBySagaIdAndSagaStatus(
+            UUID.fromString(paymentResponse.getSagaId()), SagaStatus.STARTED);
 
     if (orderPaymentOutboxMessageResponse.isEmpty()) {
       log.info("An outbox message with saga id: {} is already processed!", paymentResponse.getSagaId());

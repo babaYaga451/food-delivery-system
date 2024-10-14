@@ -1,5 +1,7 @@
 package com.food.ordering.system.order.service.domain;
 
+import com.food.ordering.system.order.service.domain.outbox.approval.ApprovalOutboxPublisher;
+import com.food.ordering.system.order.service.domain.outbox.payment.PaymentOutboxPublisher;
 import com.food.ordering.system.order.service.domain.ports.output.message.publisher.payment.PaymentRequestMessagePublisher;
 import com.food.ordering.system.order.service.domain.ports.output.message.publisher.restaurantApproval.RestaurantApprovalRequestMessagePublisher;
 import com.food.ordering.system.order.service.domain.ports.output.repository.ApprovalOutboxRepository;
@@ -52,6 +54,16 @@ public class OrderTestConfiguration {
   @Bean
   public OrderDomainService orderDomainService() {
     return new OrderDomainServiceImpl();
+  }
+
+  @Bean
+  public ApprovalOutboxPublisher approvalOutboxPublisher() {
+    return Mockito.mock(ApprovalOutboxPublisher.class);
+  }
+
+  @Bean
+  public PaymentOutboxPublisher paymentOutboxPublisher() {
+    return Mockito.mock(PaymentOutboxPublisher.class);
   }
 
 }

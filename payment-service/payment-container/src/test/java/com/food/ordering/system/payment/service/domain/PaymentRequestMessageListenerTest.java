@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.food.ordering.system.domain.valueObject.PaymentOrderStatus;
 import com.food.ordering.system.domain.valueObject.PaymentStatus;
 import com.food.ordering.system.outbox.OutboxStatus;
-import com.food.ordering.system.payment.service.dataaccess.outbox.entity.OrderOutboxEntity;
-import com.food.ordering.system.payment.service.dataaccess.outbox.repository.OrderOutboxJpaRepository;
+import com.food.ordering.system.payment.service.dataaccess.mongo.outbox.entity.OrderOutboxEntity;
+import com.food.ordering.system.payment.service.dataaccess.mongo.outbox.repository.OrderOutboxMongoRepository;
 import com.food.ordering.system.payment.service.domain.dto.PaymentRequest;
 import com.food.ordering.system.payment.service.domain.ports.input.message.listener.PaymentRequestMessageListener;
 import java.math.BigDecimal;
@@ -27,6 +27,7 @@ import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 
 @Slf4j
 @SpringBootTest(classes = PaymentServiceApplication.class)
@@ -36,7 +37,7 @@ public class PaymentRequestMessageListenerTest {
   private PaymentRequestMessageListener paymentRequestMessageListener;
 
   @Autowired
-  private OrderOutboxJpaRepository orderOutboxJpaRepository;
+  private OrderOutboxMongoRepository orderOutboxMongoRepository;
 
   private final static String CUSTOMER_ID = "d215b5f8-0249-4dc5-89a3-51fd148cfb41";
   private final static BigDecimal PRICE = new BigDecimal("100");
@@ -47,9 +48,9 @@ public class PaymentRequestMessageListenerTest {
     paymentRequestMessageListener.completePayment(getPaymentRequest(sagaId));
     try {
       paymentRequestMessageListener.completePayment(getPaymentRequest(sagaId));
-    } catch (DataAccessException e) {
-      log.error("DataAccessException occurred with sql state: {}",
-          ((PSQLException) Objects.requireNonNull(e.getRootCause())).getSQLState());
+    } catch (DuplicateKeyException e) {
+      log.error("DuplicateKeyException occurred with mongo state: {}",
+          (Objects.requireNonNull(e.getMessage())));
     }
     assertOrderOutbox(sagaId);
   }
@@ -66,18 +67,16 @@ public class PaymentRequestMessageListenerTest {
       tasks.add(Executors.callable(() -> {
         try {
           paymentRequestMessageListener.completePayment(getPaymentRequest(sagaId));
-        } catch (DataAccessException e) {
-          log.error("DataAccessException occurred for thread 1 with sql state: {}",
-              ((PSQLException) Objects.requireNonNull(e.getRootCause())).getSQLState());
+        } catch (DuplicateKeyException e) {
+          log.error("DuplicateKeyException occurred for thread 1 with error: {}", e.getMessage());
         }
       }));
 
       tasks.add(Executors.callable(() -> {
         try {
           paymentRequestMessageListener.completePayment(getPaymentRequest(sagaId));
-        } catch (DataAccessException e) {
-          log.error("DataAccessException occurred for thread 2 with sql state: {}",
-              ((PSQLException) Objects.requireNonNull(e.getRootCause())).getSQLState());
+        } catch (DuplicateKeyException e) {
+          log.error("DuplicateKeyException occurred for thread 2 with error: {}", e.getMessage());
         }
       }));
 
@@ -94,7 +93,7 @@ public class PaymentRequestMessageListenerTest {
   }
 
   private void assertOrderOutbox(String sagaId) {
-    Optional<OrderOutboxEntity> orderOutboxEntity = orderOutboxJpaRepository
+    Optional<OrderOutboxEntity> orderOutboxEntity = orderOutboxMongoRepository
         .findByTypeAndSagaIdAndPaymentStatusAndOutboxStatus(ORDER_SAGA_NAME,
             UUID.fromString(sagaId),
             PaymentStatus.COMPLETED,

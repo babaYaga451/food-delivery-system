@@ -4,7 +4,7 @@ import com.food.ordering.system.order.service.domain.dto.create.CreateOrderComma
 import com.food.ordering.system.order.service.domain.dto.create.CreateOrderResponse;
 import com.food.ordering.system.order.service.domain.event.OrderCreatedEvent;
 import com.food.ordering.system.order.service.domain.mapper.OrderDataMapper;
-import com.food.ordering.system.order.service.domain.outbox.scheduler.payment.PaymentOutboxHelper;
+import com.food.ordering.system.order.service.domain.outbox.payment.PaymentOutboxHelper;
 import com.food.ordering.system.outbox.OutboxStatus;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,8 @@ public class OrderCreateCommandHandler {
         OutboxStatus.STARTED,
         UUID.randomUUID());
 
-    log.info("Returning createOrder response with id: {}", orderCreatedEvent.getOrder().getId());
+    log.info("Returning createOrder response with id: {}",
+        orderCreatedEvent.getOrder().getId().getValue().toString());
 
     return orderCreatedResponse;
   }

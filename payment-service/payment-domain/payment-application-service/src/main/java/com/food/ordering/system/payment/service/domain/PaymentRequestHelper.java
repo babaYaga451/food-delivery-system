@@ -11,7 +11,6 @@ import com.food.ordering.system.payment.service.domain.event.PaymentEvent;
 import com.food.ordering.system.payment.service.domain.exception.PaymentApplicationServiceException;
 import com.food.ordering.system.payment.service.domain.exception.PaymentNotFoundException;
 import com.food.ordering.system.payment.service.domain.mapper.PaymentDataMapper;
-import com.food.ordering.system.payment.service.domain.outbox.model.OrderOutboxMessage;
 import com.food.ordering.system.payment.service.domain.outbox.scheduler.OrderOutboxHelper;
 import com.food.ordering.system.payment.service.domain.ports.output.message.publisher.PaymentResponseMessagePublisher;
 import com.food.ordering.system.payment.service.domain.ports.output.repository.CreditEntryRepository;
@@ -30,34 +29,33 @@ import java.util.UUID;
 @Component
 public class PaymentRequestHelper {
 
+  public static final String AN_OUTBOX_MESSAGE_WITH_SAGA_ID_IS_ALREADY_SAVED_TO_DATABASE =
+      "An outbox message with saga id: {} is already saved to database!";
   private final PaymentDomainService paymentDomainService;
   private final PaymentDataMapper paymentDataMapper;
   private final PaymentRepository paymentRepository;
   private final CreditEntryRepository creditEntryRepository;
   private final CreditHistoryRepository creditHistoryRepository;
   private final OrderOutboxHelper orderOutboxHelper;
-  private final PaymentResponseMessagePublisher paymentResponseMessagePublisher;
 
   public PaymentRequestHelper(PaymentDomainService paymentDomainService,
       PaymentDataMapper paymentDataMapper,
       PaymentRepository paymentRepository,
       CreditEntryRepository creditEntryRepository,
       CreditHistoryRepository creditHistoryRepository,
-      OrderOutboxHelper orderOutboxHelper,
-      PaymentResponseMessagePublisher paymentResponseMessagePublisher) {
+      OrderOutboxHelper orderOutboxHelper) {
     this.paymentDomainService = paymentDomainService;
     this.paymentDataMapper = paymentDataMapper;
     this.paymentRepository = paymentRepository;
     this.creditEntryRepository = creditEntryRepository;
     this.creditHistoryRepository = creditHistoryRepository;
     this.orderOutboxHelper = orderOutboxHelper;
-    this.paymentResponseMessagePublisher = paymentResponseMessagePublisher;
   }
 
   @Transactional
   public void persistPayment(PaymentRequest paymentRequest) {
-    if (publishIfOutboxMessageProcessedForPayment(paymentRequest, PaymentStatus.COMPLETED)) {
-      log.info("An outbox message with saga id: {} is already saved to database!",
+    if (isOutboxMessageProcessedForPayment(paymentRequest, PaymentStatus.COMPLETED)) {
+      log.info(AN_OUTBOX_MESSAGE_WITH_SAGA_ID_IS_ALREADY_SAVED_TO_DATABASE,
           paymentRequest.getSagaId());
       return;
     }
@@ -79,8 +77,8 @@ public class PaymentRequestHelper {
 
   @Transactional
   public void persistCancelPayment(PaymentRequest paymentRequest) {
-    if (publishIfOutboxMessageProcessedForPayment(paymentRequest, PaymentStatus.CANCELLED)) {
-      log.info("An outbox message with saga id: {} is already saved to database!",
+    if (isOutboxMessageProcessedForPayment(paymentRequest, PaymentStatus.CANCELLED)) {
+      log.info(AN_OUTBOX_MESSAGE_WITH_SAGA_ID_IS_ALREADY_SAVED_TO_DATABASE,
           paymentRequest.getSagaId());
       return;
     }
@@ -141,17 +139,13 @@ public class PaymentRequestHelper {
     }
   }
 
-  private boolean publishIfOutboxMessageProcessedForPayment(PaymentRequest paymentRequest,
+  private boolean isOutboxMessageProcessedForPayment(PaymentRequest paymentRequest,
       PaymentStatus paymentStatus) {
-    Optional<OrderOutboxMessage> orderOutboxMessage =
-        orderOutboxHelper.getCompletedOrderOutboxMessageBySagaIdAndPaymentStatus(
+      return orderOutboxHelper.getCompletedOrderOutboxMessageBySagaIdAndPaymentStatus(
             UUID.fromString(paymentRequest.getSagaId()),
-            paymentStatus);
-    if (orderOutboxMessage.isPresent()) {
-      paymentResponseMessagePublisher.publish(orderOutboxMessage.get(), orderOutboxHelper::updateOutboxMessage);
-      return true;
-    }
-    return false;
+            paymentStatus)
+          .isPresent();
+
   }
 
 }
