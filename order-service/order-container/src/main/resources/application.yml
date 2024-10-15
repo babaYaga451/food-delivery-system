@@ -4,10 +4,6 @@ server:
 logging:
   level:
     com.food.ordering.system: INFO
-    org.apache.kafka: ERROR
-    org.springframework.kafka: ERROR
-    io.confluent.kafka.serializers: ERROR
-    io.confluent.kafka.schemaregistry.client: ERROR
 
 order-service:
   payment-request-topic-name: payment-request
@@ -21,9 +17,8 @@ spring:
     open-in-view: false
     show-sql: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=order&binaryTransfer=true&reWriteBatchedInserts=true&stringtype=unspecified
-    username: root
-    password: password
+    username: ${USERNAME}
+    password: ${PASSWORD}
     driver-class-name: org.postgresql.Driver
   sql:
     init:
@@ -32,14 +27,26 @@ spring:
       schema-locations: classpath:init-schema.sql
   data:
     mongodb:
-      uri: mongodb://localhost:30001/order-service
+      uri: ${SPRING_MONGO_URI}
+      database: food-ordering
 
 kafka-config:
-  bootstrap-servers: localhost:19092, localhost:29092, localhost:39092
+  bootstrap-servers: ${BOOT_STRAP_SERVERS}
   schema-registry-url-key: schema.registry.url
-  schema-registry-url: http://localhost:8081
+  schema-registry-url: ${SCHEMA_REGISTRY_URL}
   num-of-partitions: 3
   replication-factor: 3
+  property-sasl-mechanism: sasl.mechanism
+  sasl-mechanism: PLAIN
+  property-sasl-jaas-config: sasl.jaas.config
+  sasl-jaas-config: org.apache.kafka.common.security.plain.PlainLoginModule required username=${KEY} password=${SECRET};
+  property-security-protocol: security.protocol
+  security-protocol: SASL_SSL
+  property-basic-auth-credentials-source: basic.auth.credentials.source
+  basic-auth-credentials-source: USER_INFO
+  property-schema-registry-basic-auth-user-info: schema.registry.basic.auth.user.info
+  schema-registry-basic-auth-user-info: ${SCHEMA_KEY}:${SCHEMA_SECRET}
+
 
 kafka-producer-config:
   key-serializer-class: org.apache.kafka.common.serialization.StringSerializer

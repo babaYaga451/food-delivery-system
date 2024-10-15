@@ -32,7 +32,7 @@ public class ApprovalOutboxRepositoryListenerImpl implements ApprovalOutboxRepos
       OutboxStatus outboxStatus, SagaStatus... sagaStatus) {
     return reactiveMongoTemplate
         .changeStream(ApprovalOutboxEntity.class)
-        .watchCollection("restaurant_approval_outbox")
+        .watchCollection("order_restaurant_approval_outbox")
         .filter(
             where("outboxStatus").is(outboxStatus.name())
                 .and("sagaStatus").in(Arrays.asList(sagaStatus)))

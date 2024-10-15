@@ -32,7 +32,7 @@ public class PaymentOutboxRepositoryListenerImpl implements PaymentOutboxReposit
       SagaStatus... sagaStatus) {
     return reactiveMongoTemplate
         .changeStream(PaymentOutboxEntity.class)
-        .watchCollection("payment_outbox")
+        .watchCollection("order_payment_outbox")
         .filter(
             where("outboxStatus").is(outboxStatus.name())
                 .and("sagaStatus").in(Arrays.asList(sagaStatus)))

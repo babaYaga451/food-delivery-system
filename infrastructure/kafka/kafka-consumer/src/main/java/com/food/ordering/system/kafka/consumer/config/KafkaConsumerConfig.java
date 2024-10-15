@@ -42,6 +42,11 @@ public class KafkaConsumerConfig<K extends Serializable, V extends SpecificRecor
     props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, kafkaConsumerConfigData.getMaxPartitionFetchBytesDefault() *
         kafkaConsumerConfigData.getMaxPartitionFetchBytesBoostFactor());
     props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, kafkaConsumerConfigData.getMaxPollRecords());
+    props.put(kafkaConfigData.getPropertySaslMechanism(), kafkaConfigData.getSaslMechanism());
+    props.put(kafkaConfigData.getPropertySaslJaasConfig(), kafkaConfigData.getSaslJaasConfig());
+    props.put(kafkaConfigData.getPropertySecurityProtocol(), kafkaConfigData.getSecurityProtocol());
+    props.put(kafkaConfigData.getPropertyBasicAuthCredentialsSource(), kafkaConfigData.getBasicAuthCredentialsSource());
+    props.put(kafkaConfigData.getPropertySchemaRegistryBasicAuthUserInfo(), kafkaConfigData.getSchemaRegistryBasicAuthUserInfo());
     return props;
   }
 

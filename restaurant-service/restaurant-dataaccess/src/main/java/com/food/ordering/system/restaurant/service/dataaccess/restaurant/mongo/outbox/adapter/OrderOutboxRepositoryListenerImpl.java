@@ -31,7 +31,7 @@ public class OrderOutboxRepositoryListenerImpl implements OrderOutboxRepositoryL
   public Flux<OrderOutboxMessage> getOrderOutboxMessageByOutboxStatus(OutboxStatus outboxStatus,
       String type) {
     return reactiveMongoTemplate.changeStream(OrderOutboxEntity.class)
-        .watchCollection("order_outbox")
+        .watchCollection("restaurant_outbox")
         .filter(where("outboxStatus").is(outboxStatus.name())
             .and("type").is(type))
         .listen()

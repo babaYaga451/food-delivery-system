@@ -2,15 +2,9 @@ package com.food.ordering.system.restaurant.service.dataaccess.restaurant.mongo.
 
 import com.food.ordering.system.domain.valueObject.OrderApprovalStatus;
 import com.food.ordering.system.outbox.OutboxStatus;
-import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
-
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -18,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -26,7 +21,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "order_outbox")
+@Document(collection = "restaurant_outbox")
 @CompoundIndex(def = "{'type': 1, 'sagaId': 1, 'approvalStatus': 1, 'outboxStatus': 1}", unique = true)
 public class OrderOutboxEntity {
 
