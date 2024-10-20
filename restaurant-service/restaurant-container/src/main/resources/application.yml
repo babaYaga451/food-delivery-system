@@ -35,16 +35,6 @@ kafka-config:
   schema-registry-url: ${SCHEMA_REGISTRY_URL}
   num-of-partitions: 3
   replication-factor: 3
-  property-sasl-mechanism: sasl.mechanism
-  sasl-mechanism: PLAIN
-  property-sasl-jaas-config: sasl.jaas.config
-  sasl-jaas-config: org.apache.kafka.common.security.plain.PlainLoginModule required username=${KEY} password=${SECRET};
-  property-security-protocol: security.protocol
-  security-protocol: SASL_SSL
-  property-basic-auth-credentials-source: basic.auth.credentials.source
-  basic-auth-credentials-source: USER_INFO
-  property-schema-registry-basic-auth-user-info: schema.registry.basic.auth.user.info
-  schema-registry-basic-auth-user-info: ${SCHEMA_KEY}:${SCHEMA_SECRET}
 
 kafka-producer-config:
   key-serializer-class: org.apache.kafka.common.serialization.StringSerializer

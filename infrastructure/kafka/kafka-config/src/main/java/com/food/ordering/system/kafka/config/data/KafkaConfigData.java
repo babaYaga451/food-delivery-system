@@ -13,15 +13,4 @@ public class KafkaConfigData {
     private String schemaRegistryUrl;
     private Integer numOfPartitions;
     private Short replicationFactor;
-    private String saslMechanism;
-    private String saslJaasConfig;
-    private String securityProtocol;
-    private String basicAuthCredentialsSource;
-    private String schemaRegistryBasicAuthUserInfo;
-    private String propertySaslMechanism;
-    private String propertySaslJaasConfig;
-    private String propertySecurityProtocol;
-    private String propertyBasicAuthCredentialsSource;
-    private String propertySchemaRegistryBasicAuthUserInfo;
-
 }

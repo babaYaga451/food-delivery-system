@@ -9,9 +9,8 @@ spring:
     open-in-view: false
     show-sql: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=customer&binaryTransfer=true&reWriteBatchedInserts=true
-    username: root
-    password: password
+    username: ${USERNAME}
+    password: ${PASSWORD}
     driver-class-name: org.postgresql.Driver
   sql:
     init:
