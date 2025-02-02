@@ -38,3 +38,6 @@ build/
 ### Mac OS ###
 .DS_Store
 
+infrastructure/docker-compose/**
+*deployment.yaml
+*postgres.yaml
